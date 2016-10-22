@@ -100,10 +100,20 @@ if($usertype <> "Student") {
 	                        else
 	                            echo "<div class='form-group' >";
 	                    ?>
-						<label class="col-sm-3 control-label"><?=$this->lang->line("student_name")?><span class="required">必須</span></label>
+						<label class="col-sm-3 control-label">
+							<?php 
+								echo $this->lang->line("student_name");
+								if($usertype <> "Student") {
+									echo "<span class='required'>必須</span>";
+									$disabled_name = '';
+								}else{
+									$disabled_name = 'disabled';
+								}
+							?>
+						</label>
 						<div class="col-sm-9">
 						    <?php if (isset($student)) {?>
-							<input type="text" class="form-control" id="name_id" name="name" value="<?=set_value('name',$student->name)?>"   placeholder="张三">
+							<input type="text" class="form-control" id="name_id" name="name" value="<?=set_value('name',$student->name)?>" <?=$disabled_name?>   placeholder="张三">
 	                        <?php } else {?>
 							<input type="text" class="form-control" id="name_id" name="name" value="<?=set_value('name')?>"   placeholder="张三">
 
@@ -264,11 +274,21 @@ if($usertype <> "Student") {
 	                        else
 	                            echo "<div class='form-group' >";
 	                    ?>
-						<label class="col-sm-3 control-label"><?=$this->lang->line("student_sex")?><span class="required">必須</span></label>
+						<label class="col-sm-3 control-label">
+							<?php 
+								echo $this->lang->line("student_sex");
+								if($usertype <> "Student") {
+									echo "<span class='required'>必須</span>";
+									$disabled_sex = '';
+								}else{
+									$disabled_sex = ' disabled';
+								}
+							?>
+						</label>
 							<div class="col-sm-9">
                             <?php
                                if (isset($student)) {
-                                   echo form_dropdown("sex", array("" => "请选择",$this->lang->line('student_sex_male') => $this->lang->line('student_sex_male'), $this->lang->line('student_sex_female') => $this->lang->line('student_sex_female')), set_value("sex",$student->sex), "id='sex' class='form-control'");
+                                   echo form_dropdown("sex", array("" => "请选择",$this->lang->line('student_sex_male') => $this->lang->line('student_sex_male'), $this->lang->line('student_sex_female') => $this->lang->line('student_sex_female')), set_value("sex",$student->sex), "id='sex' class='form-control'".$disabled_sex);
                                }else{
                                    echo form_dropdown("sex", array("" => "请选择",$this->lang->line('student_sex_male') => $this->lang->line('student_sex_male'), $this->lang->line('student_sex_female') => $this->lang->line('student_sex_female')), set_value("sex"), "id='sex' class='form-control'");
                                }
@@ -303,12 +323,22 @@ if($usertype <> "Student") {
 	                        else
 	                            echo "<div class='form-group' >";
 	                  ?>
-						<label class="col-sm-3 control-label"><?=$this->lang->line("student_category")?><span class="required">必須</span></label>
+						<label class="col-sm-3 control-label">
+							<?php 
+								echo $this->lang->line("student_category");
+								if($usertype <> "Student") {
+									echo "<span class='required'>必須</span>";
+									$disabled_category = '';
+								}else{
+									$disabled_category = ' disabled';
+								}
+							?>
+						</label>
 						<div class="col-sm-9">
 						<?php
                                        $studentCategory = $this->session->userdata("studentCategory");
                                        if (isset($student)){
-                                          echo form_dropdown("category", $studentCategory, set_value("category",$student->category), "id='category' class='form-control'");
+                                          echo form_dropdown("category", $studentCategory, set_value("category",$student->category), "id='category' class='form-control'".$disabled_category);
                                        }else{
                                           echo form_dropdown("category", $studentCategory, set_value("category"), "id='category' class='form-control'");
                                        }
