@@ -1,0 +1,6 @@
+.DS_Store
+.svn/
+.settings/
+.vscode/
+.buildpath
+.project
