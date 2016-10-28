@@ -631,7 +631,7 @@ class Teacher extends Admin_Controller {
 
 	function active() {
 		$usertype = $this->session->userdata("usertype");
-		if($usertype == "Admin") {
+		if($usertype == "Admin" || $usertype == "TeacherManager") {
 			$id = $this->input->post('id');
 			$status = $this->input->post('status');
 			if($id != '' && $status != '') {

@@ -33,7 +33,7 @@
                                 <th class="col-sm-2"><?=$this->lang->line('teacher_name')?></th>
                                 <th class="col-sm-2"><?=$this->lang->line('teacher_type')?></th>
                                 <th class="col-sm-2"><?=$this->lang->line('teacher_email')?></th>
-                                <?php if($usertype == "Admin"){ ?>
+                                <?php if($usertype == "Admin" || $usertype == "TeacherManager"){ ?>
                                 <th class="col-sm-2"><?=$this->lang->line('teacher_status')?></th>
                                 <?php } ?>
                                 <th class="col-sm-2"><?=$this->lang->line('action')?></th>
@@ -70,7 +70,7 @@
                                     <td data-title="<?=$this->lang->line('teacher_email')?>">
                                         <?php echo $teacher->email; ?>
                                     </td>
-                                    <?php if($usertype == "Admin"){ ?>
+                                    <?php if($usertype == "Admin" || $usertype == "TeacherManager"){ ?>
                                     <td data-title="<?=$this->lang->line('teacher_status')?>">
                                       <div class="onoffswitch-small" id="<?=$teacher->teacherID?>">
                                           <input type="checkbox" id="myonoffswitch<?=$teacher->teacherID?>" class="onoffswitch-small-checkbox" name="paypal_demo" <?php if($teacher->teacheractive === '1') echo "checked='checked'"; ?>>
