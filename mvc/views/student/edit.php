@@ -25,7 +25,7 @@ span.label {
 ?>
 <div class="box">
     <div class="box-header">
-        <h3 class="box-title"><i class="fa icon-student"></i> <?=$this->lang->line('panel_title')?></h3>
+        <h3 class="box-title"><i class="fa icon-student"></i> <?=$this->lang->line('edit')?></h3>
 
        
         <ol class="breadcrumb">
@@ -35,7 +35,7 @@ span.label {
                 ?>
             <li><a href="<?=base_url("student/index/$set")?>"><?=$this->lang->line('menu_student')?></a></li>
             <?php } ?> 
-            <li class="active"><?=$this->lang->line('menu_edit')?> <?=$this->lang->line('panel_title')?></li>
+            <li class="active"> <?=$this->lang->line('edit')?></li>
         </ol>
     </div><!-- /.box-header -->
 
@@ -50,7 +50,7 @@ span.label {
 	                      <?php $this->load->view("student/customerinfo"); ?>				 
 
                           <?php
-                            if($usertype == "Admin" || $usertype == "Teacher" || $usertype == "TeacherManager") {
+                            if($usertype == "Admin" || $usertype == "Receptionist" || $usertype == "TeacherManager"|| $usertype == "Salesman") {
                             ?>
 	                        <?php if ($student->classesID <> '1' || (isset($state) && $state == "join")) { ?>                    
 						   		<!-- 调用添加客户情报界面 -->

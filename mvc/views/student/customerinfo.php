@@ -21,16 +21,21 @@ if($usertype <> "Student") {
 								<div class="col-sm-9">
 								  <div class="select2-wrapper">
                                      <?php
-									 	$disabled = ' disabled';
-										if($usertype == "Admin" || $usertype == "Teacher" || $usertype == "TeacherManager") {
-											$disabled = '';
-										}
+	
                                     $array = array('' => '请选择');
                                     foreach ($salesmans as $salesman) {
                                         $array[$salesman->teacherID] = $salesman->name." (" . $salesman->email ." )";
                                     }
                                     if(isset($student)){
-                                      echo form_dropdown("salesmanID", $array, set_value("salesmanID",$student->salesmanID), "id='salesmanID' class='form-control salesmanID'".$disabled);
+
+                                      if($usertype == "Admin" || $usertype == "TeacherManager") {
+                                         echo form_dropdown("salesmanID", $array, set_value("salesmanID",$student->salesmanID), "id='salesmanID' class='form-control salesmanID' ");
+                                      }else{
+                                         echo form_dropdown("salesmanIDName", $array, set_value("salesmanID",$student->salesmanID), "id='salesmanID' class='form-control salesmanID' disabled");
+                                         ?>
+                                         <input type="hidden" class="form-control" id="salesmanID" name="salesmanID" value="<?=set_value('salesmanID',$student->salesmanID)?>" >
+                                     <?php    
+                                      }                                     
                                    }else{
                                       echo form_dropdown("salesmanID", $array, set_value("salesmanID"), "id='salesmanID' class='form-control salesmanID'");
                                    }

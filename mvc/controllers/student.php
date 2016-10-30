@@ -116,7 +116,7 @@ class Student extends Admin_Controller {
 			array(
 				'field' => 'salesmanID',
 				'label' => $this->lang->line("student_salesman"),
-				'rules' => 'trim|required|max_length[11]|xss_clean|numeric'
+				'rules' => 'trim|max_length[11]|xss_clean|numeric'
 			),				
 			array(
 				'field' => 'name',
@@ -143,7 +143,7 @@ class Student extends Admin_Controller {
 			array(
 				'field' => 'email',
 				'label' => $this->lang->line("student_email"),
-				'rules' => 'trim|required|max_length[40]|valid_email|xss_clean|callback_unique_email'
+				'rules' => 'trim|max_length[40]|valid_email|xss_clean|callback_unique_email'
 			),
 			array(
 				'field' => 'phone',
@@ -264,7 +264,8 @@ class Student extends Admin_Controller {
 					$array["create_date"] = date("Y-m-d h:i:s");
 					$array["modify_date"] = date("Y-m-d h:i:s");
 					$array["create_userID"] = $this->session->userdata('loginuserID');
-					$array["create_username"] = $this->session->userdata('username');
+					//$array["create_username"] = $this->session->userdata('username');
+					$array["create_username"] = $this->session->userdata('name');
 					$array["create_usertype"] = $this->session->userdata('usertype');
 					$array["subjectStart_date"] = date("Y-m-d", strtotime($this->input->post("subjectStartdate")));
 					$array["subjectEnd_date"] = date("Y-m-d", strtotime($this->input->post("subjectEnddate")));						
@@ -345,8 +346,15 @@ class Student extends Admin_Controller {
 				} else {
 
 					$section = 0;
-					$array = array();
+					$array = array();					
 					$array["salesmanID"] = $this->input->post("salesmanID");
+					
+					//对应人未输入
+					if(isset($array["salesmanID"])){
+						
+						$array["salesmanID"] = 0;
+					}
+					
 					$array["name"] = $this->input->post("name");
 					$array["dob"] = date("Y-m-d", strtotime($this->input->post("dob")));
 					$array["sex"] = $this->input->post("sex");
@@ -357,11 +365,11 @@ class Student extends Admin_Controller {
 					$array["address"] = $this->input->post("address");
 					$array["category"] = $this->input->post("category");
 					$array["source"] = $this->input->post("source");
-					if($array["source"] == 1 || $array["source"] == 2){
-						$array["source_memo"] = $this->input->post("source_memo");						
+					if($array["source"] == 3){
+						$array["source_memo"] = $this->input->post("source_partner");								
 					}else{
-						$array["source_memo"] = $this->input->post("source_partner");
-					}
+						$array["source_memo"] = $this->input->post("source_memo");
+					}	
 
 					$array["possibility"] = $this->input->post("possibility");
 					$array["language_school"] = $this->input->post("language_school");
@@ -389,7 +397,8 @@ class Student extends Admin_Controller {
 					$array["create_date"] = date("Y-m-d h:i:s");
 					$array["modify_date"] = date("Y-m-d h:i:s");
 					$array["create_userID"] = $this->session->userdata('loginuserID');
-					$array["create_username"] = $this->session->userdata('username');
+					$array["create_username"] = $this->session->userdata('name');
+					//$array["create_username"] = $this->session->userdata('username');
 					$array["create_usertype"] = $usertype;
 
 					$array["graduated_school"] = $this->input->post("graduated_school");
@@ -606,10 +615,10 @@ class Student extends Admin_Controller {
 							$array["category"] = $this->input->post("category");
 							$array["source"] = $this->input->post("source");
 							
-							if($array["source"] == 1 || $array["source"] == 2){
-								$array["source_memo"] = $this->input->post("source_memo");
+							if($array["source"] == 3){
+								$array["source_memo"] = $this->input->post("source_partner");								
 							}else{
-								$array["source_memo"] = $this->input->post("source_partner");
+								$array["source_memo"] = $this->input->post("source_memo");
 							}							
 							$array["language_school"] = $this->input->post("language_school");							
 							

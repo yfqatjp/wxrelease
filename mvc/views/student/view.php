@@ -103,8 +103,24 @@
                         <p>
                             <span><?=$this->lang->line("student_source")?> </span>: 
                             <?php 
+                            $studentSource = $this->session->userdata("studentSource");
+                            
+                            //  $studentSource =  array_merge ( $studentSource,$code_list );
+                            foreach ($this->code_m->getcodeToArray(array('codeName'=>'studentSource', 'loadflag' => '1')) as $key => $value) {
+                            	$studentSource[$key] = $value;
+                            }                            
+                            $memo = "";
+                            if($student->source_memo != null && $student->source_memo != ""){
+                            	$studentSourcePartner = $this->session->userdata("studentSourcePartner");
+                            	if(array_key_exists($student->source_memo, $studentSourcePartner)){
+                            		$memo = "(".$studentSourcePartner[$student->source_memo].")";
+                            	}else{
+                            		$memo = "(".$student->source_memo.")";
+                            	}
+                            }
+                                
                                 if(array_key_exists($student->source, $studentSource)){
-                                    echo $studentSource[$student->source];
+                                    echo $studentSource[$student->source] . $memo;
                                 }
                             ?>
                         </p>
@@ -131,7 +147,7 @@
                         <p>
                             <span><?=$this->lang->line("student_salesman")?> </span>: 
                             <?php
-                                $salesman = $this->user_m->get($student->salesmanID);
+                                $salesman = $this->teacher_m->get($student->salesmanID);
                                 if($salesman){
                                     echo $salesman->name;
                                 }
