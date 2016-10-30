@@ -28,7 +28,7 @@ if($usertype <> "Student") {
                                     }
                                     if(isset($student)){
 
-                                      if($usertype == "Admin" || $usertype == "TeacherManager") {
+                                      if($usertype == "Admin" || $usertype == "TeacherManager" || $student->salesmanID == 0){
                                          echo form_dropdown("salesmanID", $array, set_value("salesmanID",$student->salesmanID), "id='salesmanID' class='form-control salesmanID' ");
                                       }else{
                                          echo form_dropdown("salesmanIDName", $array, set_value("salesmanID",$student->salesmanID), "id='salesmanID' class='form-control salesmanID' disabled");
