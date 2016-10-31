@@ -350,7 +350,7 @@ class Student extends Admin_Controller {
 					$array["salesmanID"] = $this->input->post("salesmanID");
 					
 					//对应人未输入
-					if(isset($array["salesmanID"])){
+					if(empty($array["salesmanID"])){
 						
 						$array["salesmanID"] = 0;
 					}
@@ -602,6 +602,12 @@ class Student extends Admin_Controller {
 
 							$array = array();
 							$array["salesmanID"] = $this->input->post("salesmanID");
+							//对应人未输入
+							if(empty($array["salesmanID"])){
+							
+								$array["salesmanID"] = 0;
+							}							
+							
 							$array["name"] = $this->input->post("name");
 							$array["dob"] = date("Y-m-d", strtotime($this->input->post("dob")));
 							$array["sex"] = $this->input->post("sex");
