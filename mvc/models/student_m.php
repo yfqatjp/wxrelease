@@ -33,7 +33,7 @@ class student_m extends MY_Model {
 
 	function get_classes_join() {
 		//$this->db->select('*')->from('classes')->order_by('classes_numeric asc');
-		$this->db->select('*')->from('classes')->where( array('classesID > ' => 1))->order_by('classes_numeric asc');
+		$this->db->select('*')->from('classes')->where( array('classesID > ' => 1, 'class_type =' => 0))->order_by('classes_numeric asc');
 		$query = $this->db->get();
 		return $query->result();
 	}
