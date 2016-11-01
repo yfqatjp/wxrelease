@@ -15,6 +15,7 @@ class Classes_m extends MY_Model {
 		$this->db->select('*');
 		$this->db->from('classes');
 		$this->db->join('teacher', 'classes.teacherID = teacher.teacherID', 'LEFT');
+		$this->db->where("classes.class_type = 0");
 		$query = $this->db->get();
 		return $query->result();
 	}
