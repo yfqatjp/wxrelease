@@ -136,11 +136,11 @@
                                                 <?php
                                                 $timing_remuneration = 0;
                                                 if($attendance->tattendancetype == "1"){
-                                                    $timing_remuneration = $teacher->affairs_timing_remuneration;
+                                                    $timing_remuneration = $teacher->lecture_timing_remuneration;
                                                 }else if($attendance->tattendancetype == "2"){
 													$timing_remuneration = $teacher->affairs_timing_remuneration;
                                                 }else if($attendance->tattendancetype == "3"){
-													$timing_remuneration = $teacher->affairs_timing_remuneration;
+													$timing_remuneration = $teacher->vip_timing_remuneration;
                                                 }
                                                 echo $timing_remuneration."円/時";
                                                 ?>
