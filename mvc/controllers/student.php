@@ -620,7 +620,8 @@ class Student extends Admin_Controller {
 							$array["address"] = $this->input->post("address");
 							$array["category"] = $this->input->post("category");
 							$array["source"] = $this->input->post("source");
-							
+							$array["possibility"] = $this->input->post("possibility");
+														
 							if($array["source"] == 3){
 								$array["source_memo"] = $this->input->post("source_partner");								
 							}else{
