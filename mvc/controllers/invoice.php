@@ -80,11 +80,7 @@ class Invoice extends Admin_Controller {
 					'label' => $this->lang->line("invoice_amount"),
 					'rules' => 'trim|required|xss_clean|max_length[20]|numeric|callback_valid_number'
 				),
-				array(
-					'field' => 'date',
-					'label' => $this->lang->line("invoice_date"),
-					'rules' => 'trim|required|xss_clean|max_length[10]|callback_date_valid'
-				),
+
 
 			);
 		return $rules;
@@ -101,7 +97,12 @@ class Invoice extends Admin_Controller {
 					'field' => 'payment_method',
 					'label' => $this->lang->line("invoice_paymentmethod"),
 					'rules' => 'trim|required|xss_clean|max_length[11]'
-				)
+				),
+				array(
+					'field' => 'payment_date',
+					'label' => $this->lang->line("invoice_date"),
+					'rules' => 'trim|required|xss_clean|max_length[10]|callback_date_valid'
+				)		
 			);
 		return $rules;
 	}
@@ -119,6 +120,8 @@ class Invoice extends Admin_Controller {
 						$this->data["paymentnote"] = $this->input->post('payment_note');
 						$this->data["principal"] = $this->input->post('payment_principal');
 						$this->data["paymentclass"]	= $this->input->post('payment_class');
+						$this->data["paymentdate"]	= $this->input->post('payment_date');
+												
 						if($_POST) {
 							$payment_method = '';
 							$payment_methods = $this->session->userdata("paymentMethod");
@@ -157,7 +160,7 @@ class Invoice extends Admin_Controller {
 								$amount = $this->data['invoice']->amount;
 								$payable_amount = $this->data['invoice']->paidamount;
 								if($this->input->post('payment_class') == "1"){
-									//减免学费
+									//减免学费,学费总额减少
 									$amount =  $this->data['invoice']->amount - $this->input->post('amount');
 								}elseif($this->input->post('payment_class') == "2"){
 									//退费
@@ -167,17 +170,21 @@ class Invoice extends Admin_Controller {
 								elseif($this->input->post('payment_class') == "3"){
 									//普通缴费
 									$payable_amount = $this->input->post('amount') + $this->data['invoice']->paidamount;
-								}else{
-									//$payable_amount = $this->data['invoice']->paidamount;
-									//减免学费
+									
+								}elseif($this->input->post('payment_class') == "4"){
+									
+									//增加学费，学费总额增加
 									$amount =  $this->data['invoice']->amount + $this->input->post('amount');
 								}
+								
+								//缴费总额大于学费总额，报错
 								if ($payable_amount > $this->data['invoice']->amount) {
 									//$this->session->set_flashdata('error', 'Payment amount is much than invoice amount');
 									$this->session->set_flashdata('error', $this->lang->line('invoice_payment_error'));
 									
 									redirect(base_url("invoice/payment/$id"));
 								} else {
+									
 									$this->post_data = $this->input->post();
 									if($payment_method == $payment_methods[1] 
 										|| $payment_method == $payment_methods[2]
@@ -188,6 +195,7 @@ class Invoice extends Admin_Controller {
 										|| $this->input->post('payment_class') == "2"
 										|| $this->input->post('payment_class') == "4"
 										) {
+										
 										$status = 0;
 										if($payable_amount == $this->data['invoice']->amount) {
 											$status = 2;
@@ -198,6 +206,8 @@ class Invoice extends Admin_Controller {
 										$dbuserID = 0;
 										$dbusertype = '';
 										$dbuname = '';
+										
+										//取得管理员姓名
 										if($usertype == "Admin") {
 											$user = $this->user_m->get_username_row("systemadmin", array("username" => $username));
 											$dbuserID = $user->systemadminID;
@@ -226,20 +236,21 @@ class Invoice extends Admin_Controller {
 											"paidamount" => $payable_amount,
 											"status" => $status,
 											"paymenttype" => $nowpaymenttype,
-											"paiddate" => date('Y-m-d'),
+											"paiddate" => $this->data["paymentdate"],
 											"userID" => $dbuserID,
 											"usertype" => $dbusertype,
 											'uname' => $dbuname
 										);
 
+										//添加缴费记录
 										$payment_array = array(
 											"invoiceID" => $id,
 											"studentID"	=> $this->data['invoice']->studentID,
 											"paymentamount" => $this->input->post('amount'),
 											"paymenttype" => $payment_method,
-											"paymentdate" => date('Y-m-d'),
-											"paymentmonth" => date('M'),
-											"paymentyear" => date('Y'),
+											"paymentdate" => $this->data["paymentdate"],
+											"paymentmonth" => date('M', strtotime($this->data["paymentdate"])),
+											"paymentyear" => date('Y', strtotime($this->data["paymentdate"])),
 											"paymentnote"	=> $this->input->post('payment_note'),
 											"principal"	=> $this->input->post('payment_principal'),
 											"paymentclass"	=> $this->input->post('payment_class')
@@ -296,8 +307,99 @@ class Invoice extends Admin_Controller {
 			$this->load->view('_layout_main', $this->data);
 		}
 	}
+	
+	public function delete() {
+		$usertype = $this->session->userdata("usertype");
+		if($usertype == "Admin" || $usertype == "TeacherManager") {
+			$id = htmlentities(mysql_real_escape_string($this->uri->segment(3)));
+			if((int)$id) {
+				$this->data['payment'] = $this->payment_m->get_payment($id);
+				
+	
+				if($this->data['payment']) {
+	
+					    //删除缴费记录
+					    $this->payment_m->delete_payment($id);
+						
+
+						$studentID = $this->data['payment']->studentID;
+						$deletepayment =  $this->data['payment']->paymentamount;
+						$payment_class = $this->data['payment']->paymentclass;
+						$invoiceID  = $this->data['payment']->invoiceID;
+						
+						//取得学费记录
+						$this->data['invoice'] = $this->invoice_m->get_invoice($this->data['payment']->invoiceID);
+						
+						
+						
+						$amount = $this->data['invoice']->amount;
+						$payable_amount = $this->data['invoice']->paidamount;
+						
+						if($payment_class == "1"){
+							//减免学费,学费总额减少
+							$amount =  $this->data['invoice']->amount +  $deletepayment ;
+							
+						}elseif($payment_class == "2"){
+							
+							//退费
+							$payable_amount =  $this->data['invoice']->paidamount - $deletepayment ;
+						}
+						elseif($payment_class == "3"){
+							//普通缴费
+							$payable_amount = $this->data['invoice']->paidamount - $deletepayment ;
+								
+						}elseif($payment_class == "4"){															
+							//增加学费，学费总额增加
+							$amount =  $this->data['invoice']->amount - $deletepayment ;
+						}
+						
+
+						$this->student_m->update_student(array('totalamount' => $amount,'paidamount' => $payable_amount), $studentID);
+						
+						$status = 0;
+						if($payable_amount == $amount) {
+							$status = 2;
+						} elseif($payable_amount == 0) {
+							$status = 0;
+						}else{
+							$status = 1;
+						}
+												
+						
+						$array = array(
+								"amount" => $amount,
+								"paidamount" => $payable_amount,
+								"status" => $status
+						);
+						
+						
+						
+						$this->invoice_m->update_invoice($array, $invoiceID);
+						
+						$this->session->set_flashdata('success', $this->lang->line('menu_success'));
+												
+					
+						
+							
+						redirect(base_url("student/view/$studentID"));
 
 
+				} else {
+					$this->data["subview"] = "error";
+					$this->load->view('_layout_main', $this->data);
+				}
+			} else {
+				$this->data["subview"] = "error";
+				$this->load->view('_layout_main', $this->data);
+			}
+		} else {
+			$this->data["subview"] = "error";
+			$this->load->view('_layout_main', $this->data);
+		}
+	}
+
+	
+	
 
 
 	function call_all_student() {
@@ -326,17 +428,17 @@ class Invoice extends Admin_Controller {
 
 	function date_valid($date) {
 		if(strlen($date) <10) {
-			$this->form_validation->set_message("date_valid", "%s is not valid dd-mm-yyyy");
+			$this->form_validation->set_message("date_valid", "%s is not valid yyyy-mm-dd");
 	     	return FALSE;
 		} else {
 	   		$arr = explode("-", $date);
-	        $dd = $arr[0];
+	        $yyyy  = $arr[0];
 	        $mm = $arr[1];
-	        $yyyy = $arr[2];
-	      	if(checkdate($mm, $dd, $yyyy)) {
+	        $dd = $arr[2];
+	      	if(checkdate($mm, $dd,$yyyy)) {
 	      		return TRUE;
 	      	} else {
-	      		$this->form_validation->set_message("date_valid", "%s is not valid dd-mm-yyyy");
+	      		$this->form_validation->set_message("date_valid", "%s is not valid yyyy-mm-dd");
 	     		return FALSE;
 	      	}
 	    }
@@ -356,6 +458,11 @@ class Invoice extends Admin_Controller {
 			$this->form_validation->set_message("valid_number", "%s 是无效的数字");
 			return FALSE;
 		}
+		if($this->input->post('amount') < 0){
+			$this->form_validation->set_message("valid_number", "不能输入负数");
+			return FALSE;			
+		}
+		
 		return TRUE;
 	}
 

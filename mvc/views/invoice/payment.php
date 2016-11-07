@@ -122,38 +122,31 @@
                             <?php echo form_error('payment_note'); ?>
                         </span>
                     </div>
-
+                    
+                    <?php
+                        if(form_error('payment_date'))
+                            echo "<div class='form-group has-error' >";
+                        else
+                            echo "<div class='form-group' >";
+                    ?>
+                        <label for="payment_note" class="col-sm-2 control-label">
+                            <?=$this->lang->line("invoice_date")?>
+                        </label>
+                        <div class="col-sm-6">
+                          <input type="text" class="form-control" id="payment_date" name="payment_date" value="<?=set_value('payment_date', $paymentdate)?>" >                          
+                        </div>
+                        <span class="col-sm-4 control-label">
+                            <?php echo form_error('payment_date'); ?>
+                        </span>
+                    </div>
+                    
+                    
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-8">
                             <input type="submit" class="btn btn-success" value="<?=$this->lang->line("add_payment")?>" >
                         </div>
                     </div>
 
-                    </form>
-                <?php } elseif($usertype == "Student" || $usertype == "Parent") { ?>
-                    <form class="form-horizontal" role="form" method="post">
-                        <?php 
-                            if(form_error('amount')) 
-                                echo "<div class='form-group has-error' >";
-                            else     
-                                echo "<div class='form-group' >";
-                        ?>
-                            <label for="amount" class="col-sm-2 control-label">
-                                <?=$this->lang->line("invoice_amount")?>
-                            </label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control" id="amount" name="amount" value="<?=set_value('amount', $invoice->amount-$invoice->paidamount)?>" >
-                            </div>
-                            <span class="col-sm-4 control-label">
-                                <?php echo form_error('amount'); ?>
-                            </span>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-8">
-                                <input type="submit" class="btn btn-success" value="<?=$this->lang->line("add_payment")?>" >
-                            </div>
-                        </div>
                     </form>
                 <?php } ?>
             </div>
@@ -162,6 +155,14 @@
 </div>
 
 <script type="text/javascript">
+
+$('#payment_date').datepicker({
+    format: "yyyy-mm-dd",
+    startView: 3,
+    language: "zh-CN",
+    autoclose: true
+});
+                    
 $('#classesID').change(function(event) {
     var classesID = $(this).val();
     if(classesID === '0') {

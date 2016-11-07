@@ -304,7 +304,9 @@
                             <th class="col-lg-2">缴费日期</th>
                             <th class="col-lg-2">经办人</th>
 		                    <th class="col-lg-2">金额</th>
-                            <th class="col-lg-3">备考</th>
+                            <th class="col-lg-2">备考</th>
+                            <th class="col-lg-1">操作
+                            </th>                            
 		                </tr>
 		            </thead>
 		            <tbody>
@@ -323,7 +325,9 @@
                                 <?php echo $invoice->amount; ?>
 		                    </td>
                             <td>
-		                    </td>   		                    
+		                    </td> 
+                            <td>
+		                    </td>   		                      		                    
 		                </tr>
                         <?php 
                             $payment_details = $this->payment_m->get_order_by_payment(array('invoiceID' => $invoice->invoiceID));
@@ -357,7 +361,14 @@
 		                    </td>
 		                    <td>
                                 <?php echo $payment->paymentnote ?>
-		                    </td>		                    
+		                    </td>	
+		                    <td>
+		                    <?php 
+		                     if($usertype == "Admin" || $usertype == "TeacherManager")
+                                 echo btn_delete('invoice/delete/'.$payment->paymentID, $this->lang->line('delete'));
+                            ?>
+                            
+		                    </td>	                    
 		                </tr>
                         <?php }?>
 		            </tbody>

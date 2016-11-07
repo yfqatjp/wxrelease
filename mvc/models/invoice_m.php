@@ -27,9 +27,11 @@ class Invoice_m extends MY_Model {
 		$this->db->from('invoice');
 		if($date_from){
 			$this->db->where("invoice.date >=", date("Y-m-d", strtotime($date_from)));
+		//	$this->db->where("invoice.paiddate >=", date("Y-m-d", strtotime($date_from)));
 		}
 		if($date_to){
-			$this->db->where("invoice.date <=", date("Y-m-d", strtotime($date_to)));			
+			$this->db->where("invoice.date <=", date("Y-m-d", strtotime($date_to)));		
+		//	$this->db->where("invoice.paiddate <=", date("Y-m-d", strtotime($date_to)));
 		}
 		$query = $this->db->get();
 		return $query->result();
