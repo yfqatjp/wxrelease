@@ -68,10 +68,17 @@
                             <?php 
                                 $sum1 = 0;
                                 $sum2 = 0;
+                                $oldinvoiceID = 0;
                                 if(count($invoices)) {
                                     $i = 1; 
                                     foreach($invoices as $invoice) {
-                                        $sum1 += $invoice->amount;
+
+                                        if($oldinvoiceID != $invoice->invoiceID) {
+                                        	$sum1 += $invoice->amount;
+                                        }
+                                        
+                                        $oldinvoiceID = $invoice->invoiceID;
+                                        
                                         //非减免取得
                                         $paid_array = $this->payment_m->get_paymentclass_IN(array('invoiceID' => $invoice->invoiceID));
                                                                                 
@@ -88,26 +95,8 @@
                                           	      $mark = $mark . "（有增加）";
                                           }
                                         }
-                                        
-                                        if(!is_array($paid_array)){
-                                            $paid_array = array($paid_array);
-                                        }
-                                        else{
-                                         
-                                          if(count($paid_array) == 0){
-                                          	 $test = new stdClass;
-                                             $test->student = $invoice->student;
-                                             $test->paymentdate = "";
-                                             $test->paymenttype = "";
-                                             $test->paymentamount = "0";
-                                             $test->principal = "";
-                                             $test->paymentclass = "";
-                                             $paid_array = array($test);
-                                         }
-                                        
-                                        }
-                                        foreach ($paid_array as $paid) {
-                                           $sum2 += $paid->paymentamount;
+
+                                           $sum2 += $invoice->paymentamount;
 
                             ?>
                                 <tr>
@@ -117,39 +106,13 @@
                                     <td data-title="<?=$this->lang->line('invoice_studentName')?>">
                                         <?php echo $invoice->student; ?>
                                     </td>
-                                    <!-- 
-                                    <td data-title="<?=$this->lang->line('invoice_feetype')?>">
-                                        <?php echo $invoice->feetype; ?>
-                                    </td>
-                                     -->
+
                                     <td data-title="<?=$this->lang->line('invoice_pdate')?>">
-                                        <?php echo $paid->paymentdate; ?>
+                                        <?php echo $invoice->paymentdate; ?>
                                     </td>
-       
-                                    <!--
-                                    <td data-title="<?=$this->lang->line('invoice_status')?>">
-                                        <?php 
-
-                                            $status = $invoice->status;
-                                            $setstatus = '';
-                                            if($status == 0) {
-                                                $status = $this->lang->line('invoice_notpaid');
-                                            } elseif($status == 1) {
-                                                $status = $this->lang->line('invoice_partially_paid');
-                                            } elseif($status == 2) {
-                                                $status = $this->lang->line('invoice_fully_paid');
-                                            }
-
-                                            echo "<button class='btn btn-success btn-xs'>".$status."</button>";
-
-                                        ?>
-                                    </td>
-                                    -->
-
-
 
                                     <td data-title="<?=$this->lang->line('invoice_paymentmethod')?>">
-                                        <?php echo $paid->paymenttype; ?>
+                                        <?php echo $invoice->paymenttype; ?>
                                     </td>
 
                                     <td data-title="<?=$this->lang->line('invoice_amount_total')?>">
@@ -157,10 +120,10 @@
                                     </td>
 
                                     <td data-title="<?=$this->lang->line('invoice_paid_amount')?>">
-                                        <?php echo $siteinfos->currency_symbol. ($paid->paymentamount); ?>
+                                        <?php echo $siteinfos->currency_symbol. ($invoice->paymentamount); ?>
                                     </td>
                                     <td data-title="<?=$this->lang->line('invoice_principal')?>">
-                                        <?php echo $paid->principal; ?>
+                                        <?php echo $invoice->principal; ?>
                                     </td>
 
                                     
@@ -169,14 +132,10 @@
                                         echo btn_view('student/view/'.$invoice->studentID, $this->lang->line('view'))
                                         ?>
                                         <?php if($usertype == "Admin" || $usertype == "Accountant") { ?>
-                                        <!--
-                                        <?php echo btn_edit('invoice/edit/'.$invoice->invoiceID, $this->lang->line('edit')) ?>
-                                        <?php echo btn_delete('invoice/delete/'.$invoice->invoiceID, $this->lang->line('delete'))?>
-                                        -->
                                         <?php } ?>
                                     </td>
                                 </tr>
-                            <?php $i++; }}} ?>
+                            <?php $i++; }} ?>
                         </tbody>
                         <tfoot>
                             <tr>

@@ -40,6 +40,31 @@ class Payment_m extends MY_Model {
 		return $query->result();
 	}	
 	
+	function get_payment_where($date_from=NULL, $date_to=NULL) {
+		$this->db->select('invoice.amount as amount ,
+				           invoice.invoiceID as invoiceID ,
+				           invoice.student as student ,
+				           invoice.studentID as studentID ,
+				           payment.paymentclass as paymentclass,
+				           payment.paymenttype as paymenttype,
+				           payment.paymentamount as paymentamount,
+				           payment.principal as principal,
+				           payment.paymentdate as paymentdate');
+		$this->db->from('payment');
+		
+		$this->db->join('invoice', 'invoice.invoiceID = payment.invoiceID');
+		if($date_from){
+			$this->db->where("payment.paymentdate >=", date("Y-m-d", strtotime($date_from)));
+		}
+		if($date_to){
+			$this->db->where("payment.paymentdate <=", date("Y-m-d", strtotime($date_to)));
+		}
+
+		$query = $this->db->get();
+		return $query->result();
+	}
+	
+	
 	
 	function get_single_payment($array=NULL) {
 		$query = parent::get_single($array);

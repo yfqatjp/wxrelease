@@ -43,8 +43,11 @@ class Invoice extends Admin_Controller {
 		if($usertype == "Admin" ) {
 			// $this->data['date_from'] = $this->input->post('date_from');
 			// $this->data['date_to'] = $this->input->post('date_to');
-			$this->data['invoices'] = $this->invoice_m->get_invoice_where($this->data['date_from'],$this->data['date_to']);
+			//$this->data['invoices'] = $this->invoice_m->get_invoice_where($this->data['date_from'],$this->data['date_to']);
+			
+			$this->data['invoices'] = $this->payment_m->get_payment_where($this->data['date_from'],$this->data['date_to']);
 			$this->data["subview"] = "invoice/index";
+			
 			$this->load->view('_layout_main', $this->data);
 		} elseif($usertype == "Student") {
 			$username = $this->session->userdata("username");
