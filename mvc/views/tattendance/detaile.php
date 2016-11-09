@@ -148,7 +148,13 @@
                                             <td>
                                                 <?php
                                                 if($attendance->verifyflg == '0'){
-													echo $timing_remuneration * $workingHours."円";                                                	
+
+                                                    if($attendance->wage == 0){
+                                                    	echo $timing_remuneration * $workingHours."円";
+                                                    }else{
+                                                    	echo $attendance->wage."円(※修改)";
+                                                    }
+													                                               	
                                                 }else{
                                                 	echo $attendance->wage."円"; 
                                                 }

@@ -157,6 +157,7 @@
                      </div>
                      
                   <?php
+
                            if(form_error('TE_note'))
                                echo "<div class='form-group has-error' >";
                            else
@@ -167,10 +168,31 @@
                             <input type="text" class="form-control" name="TE_note" id="TE_note" value="<?=set_value("TE_note", $tattendance->work_note)?>" >
                         </div>
                         <span class="col-sm-4 control-label">
-                       <?php echo form_error('"TE_note"'); ?>
+                       <?php echo form_error('TE_note'); ?>
                        </span>
                       </div>
 
+
+                  <?php
+                  $usertype = $this->session->userdata("usertype");
+                  if($usertype == "Admin" || $usertype == "TeacherManager" ) {
+                           if(form_error('TE_wage'))
+                               echo "<div class='form-group has-error' >";
+                           else
+                               echo "<div class='form-group' >";
+                   ?>
+                        <label class="col-sm-2 control-label" for="checkboxes">工资（强制修改时填写）</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" name="TE_wage" id="TE_wage" value="<?=set_value("TE_wage", $tattendance->wage)?>" >
+                        </div>
+                        <span class="col-sm-4 control-label">
+                       <?php echo form_error('TE_wage'); ?>
+                       </span>
+                      </div>                      
+                   <?php }
+                   ?>                      
+                      
+                      
                   <div class="form-group">
                       <div class="col-sm-offset-2 col-sm-6">
                       <div id="holidays">

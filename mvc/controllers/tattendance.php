@@ -76,7 +76,12 @@ class Tattendance extends Admin_Controller {
 					'field' => 'TE_note',
 					'label' => $this->lang->line("TE_note"),
 					'rules' => 'trim|required|xss_clean'
-			)		
+			),
+			array(
+					'field' => 'TE_wage',
+					'label' => $this->lang->line("TE_wage"),
+					'rules' => 'trim|numeric|xss_clean'
+			),						
 		);
 		return $rules;
 	}
@@ -221,31 +226,42 @@ class Tattendance extends Admin_Controller {
 		$teacherID = htmlentities(mysql_real_escape_string($this->uri->segment(5)));
 		if((int)$tattendanceID){
 			
-			
-			$attendance = $this->tattendance_m->get_tattendance($tattendanceID);
-			$teacher = $this->teacher_m->get_teacher($teacherID);
+			if($flg == 1){
+				$attendance = $this->tattendance_m->get_tattendance($tattendanceID);
+				$teacher = $this->teacher_m->get_teacher($teacherID);
+					
+				date_default_timezone_set("UTC");
+					
+				$workingHours =  $this->wage_m->quarter_round(date("H:i", strtotime($attendance->end_time) - strtotime($attendance->start_time)),0);
+					
+					
+				$timing_remuneration = 0;
+				if($attendance->tattendancetype == "1"){
+					$timing_remuneration = $teacher->lecture_timing_remuneration;
+				}else if($attendance->tattendancetype == "2"){
+					$timing_remuneration = $teacher->affairs_timing_remuneration;
+				}else if($attendance->tattendancetype == "3"){
+					$timing_remuneration = $teacher->vip_timing_remuneration;
+				}
+					
 				
-			//$workingHours =  $this->wage_m->quarter_round(date("h:i:s", strtotime($attendance->end_time) - strtotime($attendance->start_time)),0);
-			
-			date_default_timezone_set("UTC");
-			
-			$workingHours =  $this->wage_m->quarter_round(date("H:i", strtotime($attendance->end_time) - strtotime($attendance->start_time)),0);
-			
-			
-			$timing_remuneration = 0;
-			if($attendance->tattendancetype == "1"){
-				$timing_remuneration = $teacher->lecture_timing_remuneration;
-			}else if($attendance->tattendancetype == "2"){
-				$timing_remuneration = $teacher->affairs_timing_remuneration;
-			}else if($attendance->tattendancetype == "3"){
-				$timing_remuneration = $teacher->vip_timing_remuneration;
+				$array = array();
+				
+				if($attendance->wage != 0){
+					$array["wage"] = $attendance->wage;
+				}else{
+					$array["wage"] = $workingHours * $timing_remuneration;
+				}
+				
+				
+				
+				
+				$array["work_time"] = $workingHours;
+				$array["verifyflg"] = $flg;				
+			}else{
+				$array["wage"] = 0;
+				$array["verifyflg"] = $flg;
 			}
-			
-		    $array = array();
-		    $array["wage"] = $workingHours * $timing_remuneration;
-		    $array["work_time"] = $workingHours;		    
-		    $array["verifyflg"] = $flg;		    
-			
 			
 			$this->tattendance_m->update_tattendance($array, $tattendanceID);
 			
@@ -374,7 +390,14 @@ class Tattendance extends Admin_Controller {
 						$teacher_transport_ID = $this->input->post("TE_select");
 						$teacher_transport_amount = $this->input->post("TE_Amount");
 						$work_note = $this->input->post("TE_note");
-
+						
+						
+						$work_wage = $this->input->post("TE_wage");
+						
+						if($work_wage == ""){
+							$work_wage = 0;
+						}
+						
 						$this->form_validation->set_rules($rules);
 						
 						if ($this->form_validation->run() == FALSE) {
@@ -400,7 +423,8 @@ class Tattendance extends Admin_Controller {
 									"end_time" => $this->fixTimeStr($this->input->post("end_time")),
 									"teacher_transport_ID" => $teacher_transport_ID,
 									"teacher_transport_amount" => $teacher_transport_amount,
-									"work_note" => $work_note,		
+									"work_note" => $work_note,
+									"wage" => 	$work_wage,	
 								);
 								
 								if($tattendanceType){
