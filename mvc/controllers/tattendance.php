@@ -220,6 +220,49 @@ class Tattendance extends Admin_Controller {
 		}
 	}
 
+	public function verify_all(){
+		$teacherID = htmlentities(mysql_real_escape_string($this->uri->segment(3)));
+		if((int)$teacherID){
+			$array = array(
+				'teacherID' => $teacherID,
+				'date >=' => $this->session->userdata("dateFrom"),
+				'date <=' => $this->session->userdata("dateTo"),
+				'verifyflg' => '0'
+			);
+			$attendances = $this->tattendance_m->get_order_by_tattendance($array);
+			if(count($attendances)) {
+				$i = 1; 
+				foreach($attendances as $key => $attendance) {
+					$teacher = $this->teacher_m->get_teacher($teacherID);
+					date_default_timezone_set("UTC");
+					$workingHours =  $this->wage_m->quarter_round(date("H:i", strtotime($attendance->end_time) - strtotime($attendance->start_time)),0);
+					$timing_remuneration = 0;
+					if($attendance->tattendancetype == "1"){
+						$timing_remuneration = $teacher->lecture_timing_remuneration;
+					}else if($attendance->tattendancetype == "2"){
+						$timing_remuneration = $teacher->affairs_timing_remuneration;
+					}else if($attendance->tattendancetype == "3"){
+						$timing_remuneration = $teacher->vip_timing_remuneration;
+					}
+					$array = array();
+					if($attendance->wage != 0){
+						$array["wage"] = $attendance->wage;
+					}else{
+						$array["wage"] = $workingHours * $timing_remuneration;
+					}
+					$array["work_time"] = $workingHours;
+					$array["verifyflg"] = '1';	
+					$this->tattendance_m->update_tattendance($array, $attendance->tattendanceID);
+				}
+			}
+			$this->session->set_flashdata('success', $this->lang->line('menu_success'));
+			redirect(base_url("tattendance/detaile/".$teacherID));
+		} else {
+			$this->data["subview"] = "error";
+			$this->load->view('_layout_main', $this->data);
+		}
+	}
+
 	public function verify() {
 		$tattendanceID = htmlentities(mysql_real_escape_string($this->uri->segment(3)));
 		$flg = htmlentities(mysql_real_escape_string($this->uri->segment(4)));
@@ -560,7 +603,7 @@ class Tattendance extends Admin_Controller {
 	}
 
 	function check_start_time(){
-		if($this->fixTimeStr($this->input->post("start_time")) >= $this->fixTimeStr($this->input->post("end_time"))){
+		if($this->fixTimeStr($this->input->post("start_time")) > $this->fixTimeStr($this->input->post("end_time"))){
 			$this->form_validation->set_message("check_start_time", "%s 必须小于结束时间");
 			return FALSE;
 		}
@@ -568,7 +611,7 @@ class Tattendance extends Admin_Controller {
 	}
 
 	function check_end_time(){
-		if($this->fixTimeStr($this->input->post("start_time")) >= $this->fixTimeStr($this->input->post("end_time"))){
+		if($this->fixTimeStr($this->input->post("start_time")) > $this->fixTimeStr($this->input->post("end_time"))){
 			$this->form_validation->set_message("check_end_time", "%s 必须大于开始时间");
 			return FALSE;
 		}

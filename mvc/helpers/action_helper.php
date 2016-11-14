@@ -24,10 +24,10 @@ function btn_delete($uri, $name) {
     );
 }
 
-function btn_verify($uri, $name, $message) {
-    return anchor($uri, "<i class='fa fa-check'></i>",
+function btn_verify($uri, $name, $message, $label='') {
+    return anchor($uri, "<i class='fa fa-check'>".$label."</i>",
         array(
-            'onclick' => "return confirm('将承认此条考勤，如果承认，将计入工资核算，确认是否承认?')",
+            'onclick' => "return confirm('".$message."')",
             'class' => 'btn btn-success btn-xs mrg',
             'data-placement' => 'top',
             'data-toggle' => 'tooltip',

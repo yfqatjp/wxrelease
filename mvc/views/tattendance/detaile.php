@@ -82,7 +82,14 @@
                                 <th class="col-sm-1"><?=$this->lang->line('tattendance_status')?></th>
                                 <th class="col-sm-1"><?=$this->lang->line('tattendance_note')?></th>
 
-                                <?php // if($usertype != "Teacher") { ?><th class="col-sm-2"><?=$this->lang->line('action')?></th><?php // }?>
+                                <?php // if($usertype != "Teacher") { ?>
+                                <th class="col-sm-2">
+                                <?=$this->lang->line('action')?>
+                                <?php
+                                    echo btn_verify('tattendance/verify_all/'.$teachers->teacherID, '全部承认', '将承认全部未承认记录，确认是否承认?', '全部承认');
+                                ?>
+                                </th>
+                                <?php // }?>
                             </tr>
                         </thead>
                         <tbody>
