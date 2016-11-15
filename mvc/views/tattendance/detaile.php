@@ -19,6 +19,17 @@
                     if($usertype == "Admin" || $usertype == "Teacher" || $usertype == "TeacherManager" || $usertype == "Receptionist"|| $usertype == "Salesman") {
                 ?>
                     <h5 class="page-header">
+                        <?php
+                            if($usertype == "Admin" || $usertype == "TeacherManager" ) {
+                        ?>
+                            <a href="<?php echo base_url('tattendance/index/1') ?>" style=" margin-right: 10px;">
+                                <i class="fa fa-chevron-left"></i>
+                                返回
+                            </a>
+                            <span> </span>
+                        <?php
+                            }
+                        ?>
                         <a href="<?php echo base_url('tattendance/add') ?>">
                             <i class="fa fa-plus"></i>
                             <?=$this->lang->line('add_title')?>
@@ -86,7 +97,9 @@
                                 <th class="col-sm-2">
                                 <?=$this->lang->line('action')?>
                                 <?php
-                                    echo btn_verify('tattendance/verify_all/'.$teachers->teacherID, '全部承认', '将承认全部未承认记录，确认是否承认?', '全部承认');
+                                    if($usertype == "Admin" || $usertype == "TeacherManager" ) {
+                                        echo btn_verify('tattendance/verify_all/'.$teachers->teacherID, '全部承认', '将承认全部未承认记录，确认是否承认?', '全部承认');
+                                    }
                                 ?>
                                 </th>
                                 <?php // }?>

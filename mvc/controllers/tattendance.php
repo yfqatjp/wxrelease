@@ -127,6 +127,7 @@ class Tattendance extends Admin_Controller {
 				$data = array(
 						"dateFrom" => $this->data['date_from'],
 						"dateTo" => $this->data['date_to'],
+						"teachertype" => $this->data['teacher_type'],
 				);
 				
 				$this->session->set_userdata($data);
@@ -137,7 +138,15 @@ class Tattendance extends Admin_Controller {
 					$this->data['date_to'] = $this->session->userdata("dateTo");
 					$this->data['teacher_type'] = $this->session->userdata("teachertype");
 					$this->data['verify_status'] = $this->session->userdata("verifyStatus");
-					$this->data['teachers'] = $this->teacher_m->get_teacher();
+					// $this->data['teachers'] = $this->teacher_m->get_teacher();
+					$where = array();
+					$where["date >="] = "'".$this->data['date_from']."'";
+					$where["date <="] = "'".$this->data['date_to']."'";
+					
+					if($this->data['teacher_type'] != ""){
+						$where["teachertype ="] = "'".$this->data['teacher_type']."'";
+					}
+					$this->data['teachers'] = $this->tattendance_m->get_tattendance_verifyflg($where);
 				}else{
 					$this->data['teachers'] = [];
 					// $today = strtotime(date("Y-m"));
