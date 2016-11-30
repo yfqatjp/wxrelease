@@ -191,6 +191,7 @@ class student_m extends MY_Model {
 		$this->db->join('classes', 'classes.classesID = student.classesID', 'INNER');
 		$this->db->join('course_details', 'course_details.classesID = classes.classesID', 'INNER');
 		$this->db->join('routine', 'course_details.subjectID = routine.subjectID', 'INNER');
+		$this->db->where('student.subjectEnd_date >=', date("Y-m-d"));
 		$this->db->where('routine.subjectID', $subject);
 		$this->db->where('routine.date', $date);
 		$this->db->order_by('routine.start_time asc');
