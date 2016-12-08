@@ -358,7 +358,8 @@ class Wage extends Admin_Controller {
             				"workingHours"=>$workLectureTime,
             				"wageType"=>'2',                 //时给
             				"amount"=>$teacher->lecture_timing_remuneration,  //时给 *工作时长
-            				"total"=>$teacher->lecture_timing_remuneration * $workLectureTime,
+            				//"total"=>$teacher->lecture_timing_remuneration * $workLectureTime,
+            				"total"=>$teacher->$workLectureWage,
             				"note"=>'自动计算（'.$teacher->lecture_timing_remuneration.'円/时）',
             				"operator"=>$username
             		);
@@ -378,7 +379,8 @@ class Wage extends Admin_Controller {
             				"workingHours"=>$workAffairsTime,
             				"wageType"=>'2',                 //时给
             				"amount"=>$teacher->affairs_timing_remuneration,  //时给 *工作时长
-            				"total"=>$teacher->affairs_timing_remuneration * $workAffairsTime,
+            				//"total"=>$teacher->affairs_timing_remuneration * $workAffairsTime,
+            				"total"=>$workAffairsWage,
             				"note"=>'自动计算（'.$teacher->affairs_timing_remuneration.'円/时）',
             				"operator"=>$username
             		);
@@ -396,7 +398,8 @@ class Wage extends Admin_Controller {
             				"typeOfWork"=>'3',               //事务
             				"workingHours"=>$workVipTime,
             				"wageType"=>'2',                 //时给
-            				"amount"=>$teacher->affairs_timing_remuneration,  //时给 *工作时长
+            				//"amount"=>$teacher->affairs_timing_remuneration,  //时给 *工作时长
+            				"amount"=>$workVipWage,  //时给 *工作时长
             				"total"=>$workVipWage,
             				"note"=>'自动计算（'.$teacher->vip_timing_remuneration.'円/时）',
             				"operator"=>$username
