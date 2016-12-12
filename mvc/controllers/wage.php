@@ -359,7 +359,7 @@ class Wage extends Admin_Controller {
             				"wageType"=>'2',                 //时给
             				"amount"=>$teacher->lecture_timing_remuneration,  //时给 *工作时长
             				//"total"=>$teacher->lecture_timing_remuneration * $workLectureTime,
-            				"total"=>$teacher->$workLectureWage,
+            				"total"=>$workLectureWage,
             				"note"=>'自动计算（'.$teacher->lecture_timing_remuneration.'円/时）',
             				"operator"=>$username
             		);
