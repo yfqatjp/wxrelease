@@ -164,7 +164,7 @@ class reset_m extends CI_Model {
 				$message = $this->parser->parse('template/mail/resetpw', $data, TRUE);
 			
 			}else{
-				$this->email->subject('维新学院管理系统账户激活');
+				$this->email->subject('唯新学院移动办公系统账户激活');
 				$data['login_url'] =  base_url("signin/index/");
 				// テンプレートに変数をアサイン
 					
